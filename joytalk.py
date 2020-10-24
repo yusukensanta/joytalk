@@ -11,7 +11,7 @@ formatter = '%(levelname)s : %(asctime)s : %(message)s'
 logging.basicConfig(level=logging.DEBUG, format=formatter)
 
 # limited server can use
-ALLOWED_SERVERS = ["JOYNITE", "yusuken's server"]
+ALLOWED_SERVERS = list(map(int, os.getenv('ALLOWED_SERVERS').split(',')))
 BOT_NAME = 'JoyTalk'
 
 
@@ -20,9 +20,6 @@ class JoyTalk(discord.Client):
     TTS_CLIENT = texttospeech.TextToSpeechClient()
 
     async def on_ready(self):
-        if os.getenv('MODE') != 'local' and not discord.opus.is_loaded():
-            discord.opus.load_opus("heroku-buildpack-libopus")
-
         for guild in self.guilds:
             logging.info(f"- {guild.id} (name: {guild.name})")
 
@@ -31,7 +28,8 @@ class JoyTalk(discord.Client):
 
     async def on_message(self, message):
         if message.guild.name not in ALLOWED_SERVERS:
-            message.channel.send("β版なためこのサーバーではJoyTalkは使えません")
+            await message.channel.send("β版なためこのサーバーではJoyTalkは使えません")
+            return
 
         voice_state = message.author.voice
 
