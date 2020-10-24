@@ -56,20 +56,22 @@ class JoyTalk(discord.Client):
         elif message.content == '/jtstart' or message.content == '/jt s':
             if not message.author.bot and message.guild.name not in ALLOWED_SERVERS:
                 await message.channel.send("β版なためこのサーバーではJoyTalkは使えません")
-            if self.VOICE_CLIENTS.get(message.guild.id, None):
-                await message.channel.send(
-                    f"すでに'{self.VOICE_CLIENTS[message.guild.id].channel.name}'のvcに入っています"
-                )
-
-            if voice_state:
-                self.VOICE_CLIENTS[
-                    message.guild.id] = await voice_state.channel.connect()
             else:
-                await message.channel.send("先にボイスチャンネルに入ってください")
+                if self.VOICE_CLIENTS.get(message.guild.id, None):
+                    await message.channel.send(
+                        f"すでに'{self.VOICE_CLIENTS[message.guild.id].channel.name}'のvcに入っています"
+                    )
+
+                if voice_state:
+                    self.VOICE_CLIENTS[
+                        message.guild.id] = await voice_state.channel.connect(
+                        )
+                else:
+                    await message.channel.send("先にボイスチャンネルに入ってください")
         elif message.content == '/jtend' or message.content == '/jt e':
             if not message.author.bot and message.guild.name not in ALLOWED_SERVERS:
                 await message.channel.send("β版なためこのサーバーではJoyTalkは使えません")
-            if self.VOICE_CLIENTS.get(message.guild.id, None):
+            elif self.VOICE_CLIENTS.get(message.guild.id, None):
                 await self.VOICE_CLIENTS[message.guild.id].disconnect()
 
         elif voice_state and self.VOICE_CLIENTS.get(message.guild.id, None):
