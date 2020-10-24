@@ -2,7 +2,7 @@
 name = "joytalk"
 version = "1.0.0"
 description = "A bot for discord to convert text to speech"
-authors = ["yusukensanta <yusuke.nakayama1218@gmail.com>"]
+authors = ["yusuken <yusuken_@acm.org>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
