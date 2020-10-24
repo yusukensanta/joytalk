@@ -10,6 +10,7 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 formatter = '%(levelname)s : %(asctime)s : %(message)s'
 logging.basicConfig(level=logging.DEBUG, format=formatter)
 
+# limited server can use
 ALLOWED_SERVERS = ["JOYNITE", "yusuken's server"]
 BOT_NAME = 'JoyTalk'
 
