@@ -37,7 +37,7 @@ class JoyTalk(discord.Client):
         if message.author.bot:
             return
 
-        # need to map user id and display name
+        # this won't work unless enable mapping user id and display name
         if message.content == '@' + BOT_NAME:
             await message.channel.send("""
                 ```
