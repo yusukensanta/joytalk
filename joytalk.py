@@ -17,6 +17,7 @@ BOT_NAME = 'JoyTalk'
 
 class JoyTalk(discord.Client):
     VOICE_CLIENTS: Dict[Any, Any] = {}
+    CHATS: Dict[int, Dict] = {}
     TTS_CLIENT = texttospeech.TextToSpeechClient()
 
     async def on_ready(self):
@@ -63,6 +64,7 @@ class JoyTalk(discord.Client):
                     )
 
                 if voice_state:
+                    self.CHATS[message.guild.id] = message.channel.id
                     self.VOICE_CLIENTS[
                         message.guild.id] = await voice_state.channel.connect(
                         )
@@ -74,7 +76,10 @@ class JoyTalk(discord.Client):
             elif self.VOICE_CLIENTS.get(message.guild.id, None):
                 await self.VOICE_CLIENTS[message.guild.id].disconnect()
 
-        elif voice_state and self.VOICE_CLIENTS.get(message.guild.id, None):
+        elif voice_state and self.VOICE_CLIENTS.get(
+                message.guild.id, None) and self.CHATS.get(
+                    message.guild.id, None) and self.CHATS.get(
+                        message.guild.id) == message.channel.id:
             voice_path = self._generate_audio(message.content)
             self._play(voice_path, self.VOICE_CLIENTS[message.guild.id])
 
@@ -83,6 +88,7 @@ class JoyTalk(discord.Client):
                 before.channel.members) < 2 and member.name != BOT_NAME:
             vc = self.VOICE_CLIENTS[member.guild.id]
             self.VOICE_CLIENTS[member.guild.id] = None
+            self.CHATS[member.guild.id] = None
             try:
                 await vc.disconnect()
             except AttributeError:
