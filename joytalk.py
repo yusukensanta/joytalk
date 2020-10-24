@@ -54,7 +54,7 @@ class JoyTalk(discord.Client):
                 ```
                 """)
         elif message.content == '/jtstart' or message.content == '/jt s':
-            if not message.author.bot and message.guild.name not in ALLOWED_SERVERS:
+            if not message.author.bot and message.guild.id not in ALLOWED_SERVERS:
                 await message.channel.send("β版なためこのサーバーではJoyTalkは使えません")
             else:
                 if self.VOICE_CLIENTS.get(message.guild.id, None):
