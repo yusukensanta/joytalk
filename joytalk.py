@@ -66,10 +66,20 @@ class JoyTalk(discord.Client):
                     )
 
                 if voice_state:
-                    self.CHATS[message.guild.id] = message.channel.id
+                    self.CHATS[message.guild.id] = message.channel
                     self.VOICE_CLIENTS[
                         message.guild.id] = await voice_state.channel.connect(
                         )
+                    desc = """
+                        `/jt s` : JoyTalkの利用を開始
+                        `/jt e` : JoyTalkの利用を終了
+
+                        いつもありがとうございます:bow:
+                    """
+                    embeded_message = discord.Embed(colour=discord.Colour(30),
+                                                    title="JoyTalk Commands",
+                                                    description=desc)
+                    await message.channel.send(embed=embeded_message)
                 else:
                     await message.channel.send("先にボイスチャンネルに入ってください")
         elif message.content == '/jtend' or message.content == '/jt e':
@@ -77,12 +87,12 @@ class JoyTalk(discord.Client):
                 await message.channel.send("β版なためこのサーバーではJoyTalkは使えません")
             elif self.VOICE_CLIENTS.get(message.guild.id, None):
                 await self.VOICE_CLIENTS[message.guild.id].disconnect()
-                await message.channel.send("お疲れ様でした")
+                await message.channel.send("お疲れ様でした:thumbsup:")
 
         elif voice_state and self.VOICE_CLIENTS.get(
                 message.guild.id, None) and self.CHATS.get(
                     message.guild.id, None) and self.CHATS.get(
-                        message.guild.id) == message.channel.id:
+                        message.guild.id).id == message.channel.id:
             voice_path = self._generate_audio(message.content)
             self._play(voice_path, self.VOICE_CLIENTS[message.guild.id])
 
@@ -93,6 +103,7 @@ class JoyTalk(discord.Client):
                 member.guild.id].channel.id:
             vc = self.VOICE_CLIENTS[member.guild.id]
             self.VOICE_CLIENTS[member.guild.id] = None
+            await self.CHATS[member.guild.id].send("お疲れ様でした:video_game:")
             self.CHATS[member.guild.id] = None
             try:
                 await vc.disconnect()
