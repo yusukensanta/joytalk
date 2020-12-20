@@ -1,10 +1,12 @@
-import os
 import logging
+import os
+import random
+import time
+from typing import Any, Dict
+
 import discord
 
-import random
 from google.cloud import texttospeech
-from typing import Dict, Any
 
 TOKEN = os.getenv('DISCORD_TOKEN')
 formatter = '%(levelname)s : %(asctime)s : %(message)s'
@@ -71,10 +73,11 @@ class JoyTalk(discord.Client):
                 else:
                     await message.channel.send("先にボイスチャンネルに入ってください")
         elif message.content == '/jtend' or message.content == '/jt e':
-            if not message.author.bot and message.guild.name not in ALLOWED_SERVERS:
+            if not message.author.bot and message.guild.id not in ALLOWED_SERVERS:
                 await message.channel.send("β版なためこのサーバーではJoyTalkは使えません")
             elif self.VOICE_CLIENTS.get(message.guild.id, None):
                 await self.VOICE_CLIENTS[message.guild.id].disconnect()
+                await message.channel.send("お疲れ様でした")
 
         elif voice_state and self.VOICE_CLIENTS.get(
                 message.guild.id, None) and self.CHATS.get(
@@ -85,18 +88,12 @@ class JoyTalk(discord.Client):
 
     async def on_voice_state_update(self, member, before, after):
         if before.channel and len(
-                before.channel.members) < 2 and member.name != BOT_NAME:
+                before.channel.members
+        ) < 2 and member.name != BOT_NAME and before.channel.id == self.VOICE_CLIENTS[
+                member.guild.id].channel.id:
             vc = self.VOICE_CLIENTS[member.guild.id]
             self.VOICE_CLIENTS[member.guild.id] = None
             self.CHATS[member.guild.id] = None
-            try:
-                await vc.disconnect()
-            except AttributeError:
-                logging.info("VC is already disconnected")
-
-        if before.channel and member.name == BOT_NAME:
-            vc = self.VOICE_CLIENTS[member.guild.id]
-            self.VOICE_CLIENTS[member.guild.id] = None
             try:
                 await vc.disconnect()
             except AttributeError:
@@ -121,6 +118,8 @@ class JoyTalk(discord.Client):
 
     def _play(self, path, vc):
         ffmpeg_audio = discord.FFmpegPCMAudio(path)
+        while vc.is_playing():
+            time.sleep(1)
         vc.play(ffmpeg_audio)
 
 
