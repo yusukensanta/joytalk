@@ -70,6 +70,16 @@ class JoyTalk(discord.Client):
                     self.VOICE_CLIENTS[
                         message.guild.id] = await voice_state.channel.connect(
                         )
+                    desc = """
+                        `/jt s` : JoyTalkの利用を開始
+                        `/jt e` : JoyTalkの利用を終了
+
+                        いつもありがとうございます:bow:
+                    """
+                    embeded_message = discord.Embed(colour=discord.Colour(30),
+                                                    title="JoyTalk Commands",
+                                                    description=desc)
+                    await message.channel.send(embed=embeded_message)
                 else:
                     await message.channel.send("先にボイスチャンネルに入ってください")
         elif message.content == '/jtend' or message.content == '/jt e':
