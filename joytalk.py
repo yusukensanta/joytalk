@@ -87,7 +87,6 @@ class JoyTalk(discord.Client):
                 await message.channel.send("β版なためこのサーバーではJoyTalkは使えません")
             elif self.VOICE_CLIENTS.get(message.guild.id, None):
                 await self.VOICE_CLIENTS[message.guild.id].disconnect()
-                await message.channel.send("お疲れ様でした:thumbsup:")
 
         elif voice_state and self.VOICE_CLIENTS.get(
                 message.guild.id, None) and self.CHATS.get(
@@ -102,13 +101,15 @@ class JoyTalk(discord.Client):
         ) < 2 and member.name != BOT_NAME and before.channel.id == self.VOICE_CLIENTS[
                 member.guild.id].channel.id:
             vc = self.VOICE_CLIENTS[member.guild.id]
+            text_channel = self.CHATS[member.guild.id]
             self.VOICE_CLIENTS[member.guild.id] = None
-            await self.CHATS[member.guild.id].send("お疲れ様でした:video_game:")
             self.CHATS[member.guild.id] = None
             try:
                 await vc.disconnect()
             except AttributeError:
                 logging.info("VC is already disconnected")
+
+            await text_channel.send("お疲れ様でした:video_game:")
 
     def _generate_audio(self, content):
         s_input = texttospeech.SynthesisInput(text=content)
