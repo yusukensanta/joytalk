@@ -86,7 +86,13 @@ class JoyTalk(discord.Client):
             if not message.author.bot and message.guild.id not in ALLOWED_SERVERS:
                 await message.channel.send("β版なためこのサーバーではJoyTalkは使えません")
             elif self.VOICE_CLIENTS.get(message.guild.id, None):
-                await self.VOICE_CLIENTS[message.guild.id].disconnect()
+                vc = self.VOICE_CLIENTS[message.guild.id]
+                self.VOICE_CLIENTS[message.guild.id] = None
+                self.CHATS[message.guild.id] = None
+                try:
+                    await vc.disconnect()
+                except AttributeError:
+                    logging.info("VC is already disconnected")
 
         elif voice_state and self.VOICE_CLIENTS.get(
                 message.guild.id, None) and self.CHATS.get(
