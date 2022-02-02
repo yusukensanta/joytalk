@@ -122,7 +122,7 @@ class JoyTalk(discord.Client):
                                                  voice=voice,
                                                  audio_config=config)
 
-        path = os.path.abspath(os.curdir) + "%032x" % random.getrandbits(64) + ".mp3"
+        path = "%032x" % random.getrandbits(64) + ".mp3"
         with open(path, "wb") as o:
             o.write(resp.audio_content)
 
