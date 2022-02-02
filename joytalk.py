@@ -43,25 +43,7 @@ class JoyTalk(discord.Client):
             return
 
         content = self._replace_mention(message.content, message.guild.id)
-        # this won't work unless enable mapping user id and display name
-        if content == 'アット' + BOT_NAME + " hey!":
-            botnick = self._get_botnick(message)
-            await message.channel.send(f"""
-                ```\
-                **{botnick}の使い方**\n
-**`/jt s`**:  {botnick}の利用を開始
-**`/jt e`**:  {botnick}の利用を終了
-
-VC内にBOT一人になったら自動で抜けます
-
-※ 勢いで作ったので足りないところは随時更新します！
-※ 反応するサーバーを限定しています
-（故に他のサーバーではBOTをサーバーに招待はできても使えはしないです）
-
-製作者: ゆーすけ
-```
-                """)
-        elif content == '/jtstart' or content == '/jt s':
+        if content == '/jtstart' or content == '/jt s':
             botnick = self._get_botnick(message)
             if not message.author.bot and message.guild.id not in ALLOWED_SERVERS:
                 await message.channel.send(f"β版なためこのサーバーでは{botnick}は使えません")
