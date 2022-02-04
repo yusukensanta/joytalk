@@ -92,11 +92,7 @@ class JoyTalk(discord.Client):
             self._update_members(message.guild)
 
     async def on_voice_state_update(self, member, before, after):
-        if not after.channel:
-            text_channel = self.CHATS[member.guild.id]
-            self.CHATS[member.guild.id] = None
-            await text_channel.send("お疲れ様でした:video_game:")
-        elif before.channel and len(
+        if before.channel and len(
                 before.channel.members
         ) < 2 and member.name != BOT_NAME and before.channel.id == self.VOICE_CLIENTS[
                 member.guild.id].channel.id:
